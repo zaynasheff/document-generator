@@ -2,6 +2,9 @@
 
 namespace Zaynasheff\DocumentGenerator;
 
+use PhpOffice\PhpWord\Exception\CopyFileException;
+use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
+use PhpOffice\PhpWord\TemplateProcessor;
 use Zaynasheff\DocumentGenerator\Result\GenerationResult;
 
 final class DocumentGenerator
@@ -17,15 +20,14 @@ final class DocumentGenerator
     private $values = [];
 
     /**
-     * @var bool
+     * @var string[]
      */
-    private $generateDocx = false;
+    private $formats = [];
 
     /**
      * @var string|null
      */
     private $output;
-
 
     private function __construct()
     {
@@ -36,12 +38,13 @@ final class DocumentGenerator
         return new self();
     }
 
-    public function template(string $path): self
+    public function template(string $template): self
     {
-        $this->template = $path;
+        $this->template = $template;
 
         return $this;
     }
+
     public function values(array $values): self
     {
         $this->values = $values;
@@ -51,22 +54,56 @@ final class DocumentGenerator
 
     public function docx(): self
     {
-        $this->generateDocx = true;
+        if (! in_array(DocumentFormat::DOCX, $this->formats, true)) {
+            $this->formats[] = DocumentFormat::DOCX;
+        }
 
         return $this;
     }
-    public function saveTo(string $directory): self
+
+    public function output(string $output): self
     {
-        $this->output = $directory;
+        $this->output = $output;
 
         return $this;
     }
 
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     */
     public function generate(): GenerationResult
     {
+        $docxPath = null;
+
+        if (in_array(DocumentFormat::DOCX, $this->formats, true)) {
+
+            $processor = new TemplateProcessor(
+                $this->template
+            );
+
+            foreach ($this->values as $key => $value) {
+                $processor->setValue(
+                    $key,
+                    (string) $value
+                );
+            }
+
+            $docxPath = rtrim(
+                    $this->output,
+                    DIRECTORY_SEPARATOR
+                ) . DIRECTORY_SEPARATOR . basename(
+                    $this->template
+                );
+
+            $processor->saveAs(
+                $docxPath
+            );
+        }
+
         return new GenerationResult(
-            null,
-            null,
+            $docxPath,
+            null
         );
     }
 }

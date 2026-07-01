@@ -3,8 +3,8 @@
 namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use PHPUnit\Framework\TestCase;
+use ZipArchive;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
-use Zaynasheff\DocumentGenerator\Result\GenerationResult;
 
 class GenerateDocxTest extends TestCase
 {
@@ -13,19 +13,70 @@ class GenerateDocxTest extends TestCase
         $template = __DIR__ . '/../Fixtures/templates/simple.docx';
         $output = __DIR__ . '/../Fixtures/output';
 
+        if (! is_dir($output)) {
+            mkdir($output, 0777, true);
+        }
+
         $result = DocumentGenerator::make()
             ->template($template)
             ->values([
-                'NAME' => 'John',
-                'CITY' => 'Berlin',
+                'FIRST_NAME' => 'John',
+                'LAST_NAME'  => 'Anderson',
+                'CITY'       => 'Berlin',
             ])
             ->docx()
-            ->saveTo($output)
+            ->output($output)
             ->generate();
 
-        $this->assertInstanceOf(
-            GenerationResult::class,
-            $result,
+        $this->assertTrue(
+            $result->hasDocx()
         );
+
+        $this->assertFileExists(
+            $result->docxPath()
+        );
+
+        $xml = $this->getDocumentXml(
+            $result->docxPath()
+        );
+
+        $this->assertStringContainsString(
+            'John',
+            $xml
+        );
+
+        $this->assertStringContainsString(
+            'Anderson',
+            $xml
+        );
+
+        $this->assertStringContainsString(
+            'Berlin',
+            $xml
+        );
+    }
+
+    private function getDocumentXml(
+        string $path
+    ): string {
+
+        $zip = new ZipArchive();
+
+        $this->assertTrue(
+            $zip->open($path)
+        );
+
+        $xml = $zip->getFromName(
+            'word/document.xml'
+        );
+
+        $zip->close();
+
+        $this->assertNotFalse(
+            $xml,
+            'word/document.xml not found.'
+        );
+
+        return $xml;
     }
 }

@@ -5,6 +5,8 @@ namespace Zaynasheff\DocumentGenerator;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 
+use Zaynasheff\DocumentGenerator\Configuration\DocumentGeneratorConfig;
+use Zaynasheff\DocumentGenerator\Converters\PdfConverter;
 use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 use Zaynasheff\DocumentGenerator\Generators\DocxGenerator;
 use Zaynasheff\DocumentGenerator\Result\GenerationResult;
@@ -14,33 +16,42 @@ final class DocumentGenerator
     /**
      * @var string|null
      */
-    private $template;
+    private ?string $template = null;
 
     /**
      * @var array
      */
-    private $values = [];
+    private array $values = [];
 
     /**
      * @var string[]
      */
-    private $formats = [];
+    private array $formats = [];
 
     /**
      * Output directory.
      *
      * @var string|null
      */
-    private $output;
+    private ?string $output = null;
 
     /**
      * @var DocxGenerator
      */
-    private $docxGenerator;
+    private DocxGenerator $docxGenerator;
+    /**
+     * @var PdfConverter
+     */
+    private PdfConverter $pdfConverter;
 
     private function __construct()
     {
         $this->docxGenerator = new DocxGenerator();
+        $this->pdfConverter = new PdfConverter(
+            new DocumentGeneratorConfig(
+                '/Applications/LibreOffice.app/Contents/MacOS/soffice'
+            )
+        );
     }
 
     public static function make(): self
@@ -71,6 +82,15 @@ final class DocumentGenerator
         return $this;
     }
 
+    public function pdf(): self
+    {
+        if (! in_array(DocumentFormat::PDF, $this->formats, true)) {
+            $this->formats[] = DocumentFormat::PDF;
+        }
+
+        return $this;
+    }
+
     /**
      * Sets output directory.
      */
@@ -90,9 +110,9 @@ final class DocumentGenerator
         $this->validate();
 
         $docxPath = null;
+        $pdfPath = null;
 
         if (in_array(DocumentFormat::DOCX, $this->formats, true)) {
-
             $docxPath = $this->docxGenerator->generate(
                 $this->template,
                 $this->values,
@@ -100,9 +120,25 @@ final class DocumentGenerator
             );
         }
 
+        if (in_array(DocumentFormat::PDF, $this->formats, true)) {
+
+            if ($docxPath === null) {
+                $docxPath = $this->docxGenerator->generate(
+                    $this->template,
+                    $this->values,
+                    $this->output
+                );
+            }
+
+            $pdfPath = $this->pdfConverter->convert(
+                $docxPath,
+                $this->output
+            );
+        }
+
         return new GenerationResult(
             $docxPath,
-            null
+            $pdfPath
         );
     }
 

@@ -2,12 +2,18 @@
 
 namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
+use PhpOffice\PhpWord\Exception\CopyFileException;
+use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use PHPUnit\Framework\TestCase;
 use ZipArchive;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 
 class GenerateDocxTest extends TestCase
 {
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     */
     public function test_can_generate_docx(): void
     {
         $template = __DIR__ . '/../Fixtures/templates/simple.docx';

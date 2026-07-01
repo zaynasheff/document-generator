@@ -5,6 +5,7 @@ namespace Zaynasheff\DocumentGenerator;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 
+use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 use Zaynasheff\DocumentGenerator\Generators\DocxGenerator;
 use Zaynasheff\DocumentGenerator\Result\GenerationResult;
 
@@ -81,6 +82,8 @@ final class DocumentGenerator
      */
     public function generate(): GenerationResult
     {
+        $this->validate();
+
         $docxPath = null;
 
         if (in_array(DocumentFormat::DOCX, $this->formats, true)) {
@@ -96,5 +99,26 @@ final class DocumentGenerator
             $docxPath,
             null
         );
+    }
+
+    private function validate(): void
+    {
+        if ($this->template === null) {
+            throw new DocumentGeneratorException(
+                'Template is not specified.'
+            );
+        }
+
+        if (empty($this->formats)) {
+            throw new DocumentGeneratorException(
+                'No output format specified.'
+            );
+        }
+
+        if ($this->output === null) {
+            throw new DocumentGeneratorException(
+                'Output directory is not specified.'
+            );
+        }
     }
 }

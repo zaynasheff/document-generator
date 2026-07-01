@@ -4,7 +4,8 @@ namespace Zaynasheff\DocumentGenerator;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-use PhpOffice\PhpWord\TemplateProcessor;
+
+use Zaynasheff\DocumentGenerator\Generators\DocxGenerator;
 use Zaynasheff\DocumentGenerator\Result\GenerationResult;
 
 final class DocumentGenerator
@@ -29,8 +30,14 @@ final class DocumentGenerator
      */
     private $output;
 
+    /**
+     * @var DocxGenerator
+     */
+    private $docxGenerator;
+
     private function __construct()
     {
+        $this->docxGenerator = new DocxGenerator();
     }
 
     public static function make(): self
@@ -78,26 +85,10 @@ final class DocumentGenerator
 
         if (in_array(DocumentFormat::DOCX, $this->formats, true)) {
 
-            $processor = new TemplateProcessor(
-                $this->template
-            );
-
-            foreach ($this->values as $key => $value) {
-                $processor->setValue(
-                    $key,
-                    (string) $value
-                );
-            }
-
-            $docxPath = rtrim(
-                    $this->output,
-                    DIRECTORY_SEPARATOR
-                ) . DIRECTORY_SEPARATOR . basename(
-                    $this->template
-                );
-
-            $processor->saveAs(
-                $docxPath
+            $docxPath = $this->docxGenerator->generate(
+                $this->template,
+                $this->values,
+                $this->output
             );
         }
 

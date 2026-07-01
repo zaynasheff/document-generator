@@ -27,6 +27,8 @@ final class DocumentGenerator
     private $formats = [];
 
     /**
+     * Output directory.
+     *
      * @var string|null
      */
     private $output;
@@ -69,6 +71,9 @@ final class DocumentGenerator
         return $this;
     }
 
+    /**
+     * Sets output directory.
+     */
     public function output(string $output): self
     {
         $this->output = $output;
@@ -109,6 +114,12 @@ final class DocumentGenerator
             );
         }
 
+        if (! is_file($this->template)) {
+            throw new DocumentGeneratorException(
+                'Template file does not exist.'
+            );
+        }
+
         if (empty($this->formats)) {
             throw new DocumentGeneratorException(
                 'No output format specified.'
@@ -118,6 +129,18 @@ final class DocumentGenerator
         if ($this->output === null) {
             throw new DocumentGeneratorException(
                 'Output directory is not specified.'
+            );
+        }
+
+        if (! is_dir($this->output)) {
+            throw new DocumentGeneratorException(
+                'Output directory does not exist.'
+            );
+        }
+
+        if (! is_writable($this->output)) {
+            throw new DocumentGeneratorException(
+                'Output directory is not writable.'
             );
         }
     }

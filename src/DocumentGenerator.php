@@ -2,6 +2,8 @@
 
 namespace Zaynasheff\DocumentGenerator;
 
+use Zaynasheff\DocumentGenerator\Result\GenerationResult;
+
 final class DocumentGenerator
 {
     /**
@@ -13,6 +15,16 @@ final class DocumentGenerator
      * @var array
      */
     private $values = [];
+
+    /**
+     * @var bool
+     */
+    private $generateDocx = false;
+
+    /**
+     * @var string|null
+     */
+    private $output;
 
 
     private function __construct()
@@ -35,5 +47,26 @@ final class DocumentGenerator
         $this->values = $values;
 
         return $this;
+    }
+
+    public function docx(): self
+    {
+        $this->generateDocx = true;
+
+        return $this;
+    }
+    public function saveTo(string $directory): self
+    {
+        $this->output = $directory;
+
+        return $this;
+    }
+
+    public function generate(): GenerationResult
+    {
+        return new GenerationResult(
+            null,
+            null,
+        );
     }
 }

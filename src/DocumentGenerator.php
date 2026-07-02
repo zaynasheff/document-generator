@@ -44,17 +44,17 @@ final class DocumentGenerator
      */
     private PdfConverter $pdfConverter;
 
-    private function __construct()
-    {
-        $this->docxGenerator = new DocxGenerator();
-
-        $this->pdfConverter = new PdfConverter(
-            app(DocumentGeneratorConfig::class)
-        );
+    public function __construct(
+        DocxGenerator $docxGenerator,
+        PdfConverter $pdfConverter
+    ) {
+        $this->docxGenerator = $docxGenerator;
+        $this->pdfConverter = $pdfConverter;
     }
+
     public static function make(): self
     {
-        return new self();
+        return app(self::class);
     }
 
     public function template(string $template): self

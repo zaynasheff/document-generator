@@ -11,3 +11,4 @@ build/
 
 /tests/Fixtures/output/
 /phpunit.xml
+/.env

@@ -35,6 +35,13 @@
       "Zaynasheff\\DocumentGenerator\\Tests\\": "tests/"
     }
   },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Zaynasheff\\DocumentGenerator\\DocumentGeneratorServiceProvider"
+      ]
+    }
+  },
   "minimum-stability": "stable",
   "prefer-stable": true,
   "config": {

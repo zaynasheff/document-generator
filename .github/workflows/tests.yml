@@ -47,7 +47,7 @@ jobs:
             composer-${{ runner.os }}-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
+        run: composer update --prefer-dist --no-progress --no-interaction
 
       - name: Run Pint
         run: composer format:test

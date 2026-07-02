@@ -12,3 +12,4 @@ build/
 /tests/Fixtures/output/
 /phpunit.xml
 /.env
+/composer.lock

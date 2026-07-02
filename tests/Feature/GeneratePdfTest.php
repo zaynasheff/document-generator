@@ -11,6 +11,7 @@ class GeneratePdfTest extends TestCase
 {
     public function test_can_generate_pdf(): void
     {
+
         $pdfConverter = new PdfConverter(
             app(DocumentGeneratorConfig::class)
         );

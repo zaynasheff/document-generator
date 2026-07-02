@@ -16,7 +16,9 @@ abstract class TestCase extends Orchestra
 
     protected function defineEnvironment($app): void
     {
-        if ($command = env('DOCUMENT_GENERATOR_OFFICE_COMMAND')) {
+        $command = getenv('DOCUMENT_GENERATOR_OFFICE_COMMAND');
+
+        if ($command !== false) {
             $app['config']->set(
                 'document-generator.libreoffice.command',
                 $command

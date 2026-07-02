@@ -1,70 +1,89 @@
 {
-  "name": "zaynasheff/document-generator",
-  "description": "Generate DOCX and PDF documents from DOCX templates using PHPWord and LibreOffice.",
-  "type": "library",
-  "license": "MIT",
-  "keywords": [
-    "docx",
-    "pdf",
-    "phpword",
-    "libreoffice",
-    "documents",
-    "templates"
-  ],
-  "authors": [
-    {
-      "name": "Roman Zaynashev"
-    }
-  ],
-  "require": {
-    "php": "^7.4 || ^8.0",
-    "phpoffice/phpword": "^1.4",
-    "illuminate/support": "^8.83 || ^9.0 || ^10.0 || ^11.0 || ^12.0"
-  },
-  "require-dev": {
-    "ext-zip": "*",
-    "orchestra/testbench": "^10.0",
-    "phpunit/phpunit": "^11.5",
-    "phpstan/phpstan": "^2.1",
-    "larastan/larastan": "^3.7",
-    "laravel/pint": "^1.24"
-  },
-  "scripts": {
-    "test": "phpunit",
-    "analyse": "phpstan analyse",
-    "format": "pint",
-    "format:test": "pint --test",
-    "quality": [
-      "@format:test",
-      "@analyse",
-      "@test"
+    "name": "zaynasheff/document-generator",
+    "description": "Generate DOCX and PDF documents from DOCX templates using PHPWord and LibreOffice.",
+    "type": "library",
+    "license": "MIT",
+
+    "homepage": "https://github.com/zaynasheff/document-generator",
+
+    "keywords": [
+        "laravel",
+        "docx",
+        "pdf",
+        "phpword",
+        "libreoffice",
+        "document",
+        "template",
+        "word"
     ],
-    "fix": [
-      "@format",
-      "@analyse",
-      "@test"
-    ]
-  },
-  "autoload": {
-    "psr-4": {
-      "Zaynasheff\\DocumentGenerator\\": "src/"
+
+    "authors": [
+        {
+            "name": "Roman Zaynashev"
+        }
+    ],
+
+    "support": {
+        "issues": "https://github.com/zaynasheff/document-generator/issues",
+        "source": "https://github.com/zaynasheff/document-generator"
+    },
+
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "phpoffice/phpword": "^1.4",
+        "illuminate/support": "^8.83 || ^9.0 || ^10.0 || ^11.0 || ^12.0"
+    },
+
+    "require-dev": {
+        "ext-zip": "*",
+        "larastan/larastan": "^3.7",
+        "laravel/pint": "^1.24",
+        "orchestra/testbench": "^10.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5"
+    },
+
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse",
+        "format": "pint",
+        "format:test": "pint --test",
+        "quality": [
+            "@format:test",
+            "@analyse",
+            "@test"
+        ],
+        "fix": [
+            "@format",
+            "@analyse",
+            "@test"
+        ]
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Zaynasheff\\DocumentGenerator\\": "src/"
+        }
+    },
+
+    "autoload-dev": {
+        "psr-4": {
+            "Zaynasheff\\DocumentGenerator\\Tests\\": "tests/"
+        }
+    },
+
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Zaynasheff\\DocumentGenerator\\DocumentGeneratorServiceProvider"
+            ]
+        }
+    },
+
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+
+    "config": {
+        "sort-packages": true
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Zaynasheff\\DocumentGenerator\\Tests\\": "tests/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Zaynasheff\\DocumentGenerator\\DocumentGeneratorServiceProvider"
-      ]
-    }
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
-  "config": {
-    "sort-packages": true
-  }
 }

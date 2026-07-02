@@ -14,7 +14,7 @@ final class ProcessRunner
     public function run(string $command): void
     {
         exec(
-            $command . ' 2>&1',
+            $command.' 2>&1',
             $output,
             $exitCode
         );

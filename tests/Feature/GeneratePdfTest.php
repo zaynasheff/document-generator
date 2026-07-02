@@ -18,15 +18,15 @@ class GeneratePdfTest extends TestCase
             );
         }
 
-        $template = __DIR__ . '/../Fixtures/templates/simple.docx';
-        $output = __DIR__ . '/../Fixtures/output';
+        $template = __DIR__.'/../Fixtures/templates/simple.docx';
+        $output = __DIR__.'/../Fixtures/output';
 
         $result = DocumentGenerator::make()
             ->template($template)
             ->values([
                 'FIRST_NAME' => 'John',
-                'LAST_NAME'  => 'Anderson',
-                'CITY'       => 'Berlin',
+                'LAST_NAME' => 'Anderson',
+                'CITY' => 'Berlin',
             ])
             ->pdf()
             ->output($output)

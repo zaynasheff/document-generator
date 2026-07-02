@@ -6,9 +6,8 @@ use PhpOffice\PhpWord\TemplateProcessor;
 
 final class DocxGenerator
 {
-
     /**
-     * @param array<string, string|int|float|bool|null> $values
+     * @param  array<string, string|int|float|bool|null>  $values
      */
     public function generate(
         string $template,
@@ -28,11 +27,11 @@ final class DocxGenerator
         }
 
         $path = rtrim(
-                $output,
-                DIRECTORY_SEPARATOR
-            ) . DIRECTORY_SEPARATOR . basename(
-                $template
-            );
+            $output,
+            DIRECTORY_SEPARATOR
+        ).DIRECTORY_SEPARATOR.basename(
+            $template
+        );
 
         $processor->saveAs(
             $path
@@ -40,6 +39,4 @@ final class DocxGenerator
 
         return $path;
     }
-
-
 }

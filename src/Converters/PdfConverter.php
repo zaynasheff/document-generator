@@ -23,7 +23,7 @@ final class PdfConverter
         ?ProcessRunner $runner = null
     ) {
         $this->config = $config;
-        $this->runner = $runner ?? new ProcessRunner();
+        $this->runner = $runner ?? new ProcessRunner;
     }
 
     /**
@@ -43,9 +43,9 @@ final class PdfConverter
         $this->runner->run($command);
 
         $pdf = $outputDirectory
-            . DIRECTORY_SEPARATOR
-            . pathinfo($docx, PATHINFO_FILENAME)
-            . '.pdf';
+            .DIRECTORY_SEPARATOR
+            .pathinfo($docx, PATHINFO_FILENAME)
+            .'.pdf';
 
         if (! is_file($pdf)) {
             throw new DocumentGeneratorException(
@@ -62,7 +62,7 @@ final class PdfConverter
     public function isAvailable(): bool
     {
         exec(
-            $this->config->officeCommand() . ' --version 2>&1',
+            $this->config->officeCommand().' --version 2>&1',
             $output,
             $exitCode
         );

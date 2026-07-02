@@ -13,8 +13,6 @@ final class DocumentGenerator
 {
     /**
      * Template path.
-     *
-     * @var string
      */
     private string $template;
 
@@ -34,19 +32,11 @@ final class DocumentGenerator
 
     /**
      * Output directory.
-     *
-     * @var string
      */
     private string $output;
 
-    /**
-     * @var DocxGenerator
-     */
     private DocxGenerator $docxGenerator;
 
-    /**
-     * @var PdfConverter
-     */
     private PdfConverter $pdfConverter;
 
     public function __construct(
@@ -73,7 +63,7 @@ final class DocumentGenerator
     }
 
     /**
-     * @param array<string, string|int|float|bool|null> $values
+     * @param  array<string, string|int|float|bool|null>  $values
      */
     public function values(array $values): self
     {

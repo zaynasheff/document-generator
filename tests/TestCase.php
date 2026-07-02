@@ -3,6 +3,7 @@
 namespace Zaynasheff\DocumentGenerator\Tests;
 
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Zaynasheff\DocumentGenerator\DocumentGeneratorServiceProvider;
 
@@ -16,7 +17,7 @@ abstract class TestCase extends Orchestra
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param  Application  $app
      */
     protected function defineEnvironment($app): void
     {

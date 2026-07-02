@@ -4,9 +4,9 @@ namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-use Zaynasheff\DocumentGenerator\Tests\TestCase;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
+use Zaynasheff\DocumentGenerator\Tests\TestCase;
 
 class ValidationTest extends TestCase
 {
@@ -26,7 +26,7 @@ class ValidationTest extends TestCase
 
         DocumentGenerator::make()
             ->docx()
-            ->output(__DIR__ . '/../Fixtures/output')
+            ->output(__DIR__.'/../Fixtures/output')
             ->generate();
     }
 
@@ -45,9 +45,9 @@ class ValidationTest extends TestCase
         );
 
         DocumentGenerator::make()
-            ->template(__DIR__ . '/../Fixtures/templates/not-found.docx')
+            ->template(__DIR__.'/../Fixtures/templates/not-found.docx')
             ->docx()
-            ->output(__DIR__ . '/../Fixtures/output')
+            ->output(__DIR__.'/../Fixtures/output')
             ->generate();
     }
 }

@@ -4,9 +4,9 @@ namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-use ZipArchive;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 use Zaynasheff\DocumentGenerator\Tests\TestCase;
+use ZipArchive;
 
 class GenerateDocxTest extends TestCase
 {
@@ -16,8 +16,8 @@ class GenerateDocxTest extends TestCase
      */
     public function test_can_generate_docx(): void
     {
-        $template = __DIR__ . '/../Fixtures/templates/simple.docx';
-        $output = __DIR__ . '/../Fixtures/output';
+        $template = __DIR__.'/../Fixtures/templates/simple.docx';
+        $output = __DIR__.'/../Fixtures/output';
 
         if (! is_dir($output)) {
             mkdir($output, 0777, true);
@@ -27,8 +27,8 @@ class GenerateDocxTest extends TestCase
             ->template($template)
             ->values([
                 'FIRST_NAME' => 'John',
-                'LAST_NAME'  => 'Anderson',
-                'CITY'       => 'Berlin',
+                'LAST_NAME' => 'Anderson',
+                'CITY' => 'Berlin',
             ])
             ->docx()
             ->output($output)
@@ -71,7 +71,7 @@ class GenerateDocxTest extends TestCase
     private function getDocumentXml(
         string $path
     ): string {
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         $this->assertTrue(
             $zip->open($path)

@@ -4,8 +4,8 @@ return [
 
     'libreoffice' => [
 
-        'command' => env(
-            'DOCUMENT_GENERATOR_OFFICE_COMMAND',
+        'binary' => env(
+            'DOCUMENT_GENERATOR_OFFICE_BINARY',
             'soffice'
         ),
 

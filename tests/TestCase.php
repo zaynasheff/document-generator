@@ -21,9 +21,9 @@ abstract class TestCase extends Orchestra
      */
     protected function defineEnvironment($app): void
     {
-        $command = getenv('DOCUMENT_GENERATOR_OFFICE_COMMAND');
+        $binary = getenv('DOCUMENT_GENERATOR_OFFICE_BINARY');
 
-        if ($command === false) {
+        if ($binary === false) {
             return;
         }
 
@@ -31,8 +31,8 @@ abstract class TestCase extends Orchestra
         $config = $app->make(Repository::class);
 
         $config->set(
-            'document-generator.libreoffice.command',
-            $command
+            'document-generator.libreoffice.binary',
+            $binary
         );
     }
 }

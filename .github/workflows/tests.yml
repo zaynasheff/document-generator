@@ -57,5 +57,5 @@ jobs:
 
       - name: Run PHPUnit
         env:
-          DOCUMENT_GENERATOR_OFFICE_COMMAND: soffice
+          DOCUMENT_GENERATOR_OFFICE_BINARY: soffice
         run: composer test

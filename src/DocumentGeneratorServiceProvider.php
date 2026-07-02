@@ -24,14 +24,14 @@ class DocumentGeneratorServiceProvider extends ServiceProvider
                 /** @var Repository $config */
                 $config = $app->make(Repository::class);
 
-                $command = $config->get(
-                    'document-generator.libreoffice.command',
+                $binary = $config->get(
+                    'document-generator.libreoffice.binary',
                     'soffice'
                 );
 
-                if (! is_string($command)) {
+                if (! is_string($binary)) {
                     throw new UnexpectedValueException(
-                        'The "document-generator.libreoffice.command" configuration value must be a string.'
+                        'The "document-generator.libreoffice.binary" configuration value must be a string.'
                     );
                 }
 
@@ -47,7 +47,7 @@ class DocumentGeneratorServiceProvider extends ServiceProvider
                 }
 
                 return new DocumentGeneratorConfig(
-                    $command,
+                    $binary,
                     $timeout
                 );
             }

@@ -2,6 +2,7 @@
 
 namespace Zaynasheff\DocumentGenerator\Tests;
 
+use Illuminate\Contracts\Config\Repository;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Zaynasheff\DocumentGenerator\DocumentGeneratorServiceProvider;
 
@@ -14,15 +15,23 @@ abstract class TestCase extends Orchestra
         ];
     }
 
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     */
     protected function defineEnvironment($app): void
     {
         $command = getenv('DOCUMENT_GENERATOR_OFFICE_COMMAND');
 
-        if ($command !== false) {
-            $app['config']->set(
-                'document-generator.libreoffice.command',
-                $command
-            );
+        if ($command === false) {
+            return;
         }
+
+        /** @var Repository $config */
+        $config = $app->make(Repository::class);
+
+        $config->set(
+            'document-generator.libreoffice.command',
+            $command
+        );
     }
 }

@@ -4,8 +4,6 @@ namespace Zaynasheff\DocumentGenerator;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-
-use Zaynasheff\DocumentGenerator\Configuration\DocumentGeneratorConfig;
 use Zaynasheff\DocumentGenerator\Converters\PdfConverter;
 use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 use Zaynasheff\DocumentGenerator\Generators\DocxGenerator;
@@ -14,16 +12,22 @@ use Zaynasheff\DocumentGenerator\Result\GenerationResult;
 final class DocumentGenerator
 {
     /**
-     * @var string|null
+     * Template path.
+     *
+     * @var string
      */
-    private ?string $template = null;
+    private string $template;
 
     /**
-     * @var array
+     * Template values.
+     *
+     * @var array<string, string|int|float|bool|null>
      */
     private array $values = [];
 
     /**
+     * Output formats.
+     *
      * @var string[]
      */
     private array $formats = [];
@@ -31,14 +35,15 @@ final class DocumentGenerator
     /**
      * Output directory.
      *
-     * @var string|null
+     * @var string
      */
-    private ?string $output = null;
+    private string $output;
 
     /**
      * @var DocxGenerator
      */
     private DocxGenerator $docxGenerator;
+
     /**
      * @var PdfConverter
      */
@@ -52,6 +57,9 @@ final class DocumentGenerator
         $this->pdfConverter = $pdfConverter;
     }
 
+    /**
+     * Create a new document generator instance.
+     */
     public static function make(): self
     {
         return app(self::class);
@@ -64,6 +72,9 @@ final class DocumentGenerator
         return $this;
     }
 
+    /**
+     * @param array<string, string|int|float|bool|null> $values
+     */
     public function values(array $values): self
     {
         $this->values = $values;
@@ -142,7 +153,7 @@ final class DocumentGenerator
 
     private function validate(): void
     {
-        if ($this->template === null) {
+        if (! isset($this->template)) {
             throw new DocumentGeneratorException(
                 'Template is not specified.'
             );
@@ -160,7 +171,7 @@ final class DocumentGenerator
             );
         }
 
-        if ($this->output === null) {
+        if (! isset($this->output)) {
             throw new DocumentGeneratorException(
                 'Output directory is not specified.'
             );

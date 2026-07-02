@@ -2,15 +2,13 @@
 
 namespace Zaynasheff\DocumentGenerator\Generators;
 
-use PhpOffice\PhpWord\Exception\CopyFileException;
-use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use PhpOffice\PhpWord\TemplateProcessor;
 
 final class DocxGenerator
 {
+
     /**
-     * @throws CopyFileException
-     * @throws CreateTemporaryFileException
+     * @param array<string, string|int|float|bool|null> $values
      */
     public function generate(
         string $template,

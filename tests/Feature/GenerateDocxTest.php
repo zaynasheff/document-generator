@@ -4,9 +4,9 @@ namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-use Zaynasheff\DocumentGenerator\Tests\TestCase;
 use ZipArchive;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
+use Zaynasheff\DocumentGenerator\Tests\TestCase;
 
 class GenerateDocxTest extends TestCase
 {
@@ -38,12 +38,18 @@ class GenerateDocxTest extends TestCase
             $result->hasDocx()
         );
 
+        $docxPath = $result->docxPath();
+
+        $this->assertNotNull(
+            $docxPath
+        );
+
         $this->assertFileExists(
-            $result->docxPath()
+            $docxPath
         );
 
         $xml = $this->getDocumentXml(
-            $result->docxPath()
+            $docxPath
         );
 
         $this->assertStringContainsString(
@@ -65,7 +71,6 @@ class GenerateDocxTest extends TestCase
     private function getDocumentXml(
         string $path
     ): string {
-
         $zip = new ZipArchive();
 
         $this->assertTrue(

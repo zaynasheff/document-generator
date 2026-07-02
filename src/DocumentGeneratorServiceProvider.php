@@ -2,7 +2,10 @@
 
 namespace Zaynasheff\DocumentGenerator;
 
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\ServiceProvider;
+use UnexpectedValueException;
 use Zaynasheff\DocumentGenerator\Configuration\DocumentGeneratorConfig;
 
 class DocumentGeneratorServiceProvider extends ServiceProvider
@@ -14,18 +17,41 @@ class DocumentGeneratorServiceProvider extends ServiceProvider
             'document-generator'
         );
 
-        $this->app->singleton(DocumentGeneratorConfig::class, function ($app) {
-            return new DocumentGeneratorConfig(
-                $app['config']->get(
+        $this->app->singleton(
+            DocumentGeneratorConfig::class,
+            function (Container $app): DocumentGeneratorConfig {
+
+                /** @var Repository $config */
+                $config = $app->make(Repository::class);
+
+                $command = $config->get(
                     'document-generator.libreoffice.command',
                     'soffice'
-                ),
-                $app['config']->get(
+                );
+
+                if (! is_string($command)) {
+                    throw new UnexpectedValueException(
+                        'The "document-generator.libreoffice.command" configuration value must be a string.'
+                    );
+                }
+
+                $timeout = $config->get(
                     'document-generator.libreoffice.timeout',
                     60
-                )
-            );
-        });
+                );
+
+                if (! is_int($timeout)) {
+                    throw new UnexpectedValueException(
+                        'The "document-generator.libreoffice.timeout" configuration value must be an integer.'
+                    );
+                }
+
+                return new DocumentGeneratorConfig(
+                    $command,
+                    $timeout
+                );
+            }
+        );
     }
 
     public function boot(): void

@@ -2,7 +2,6 @@
 
 namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
-use Zaynasheff\DocumentGenerator\Configuration\DocumentGeneratorConfig;
 use Zaynasheff\DocumentGenerator\Converters\PdfConverter;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 use Zaynasheff\DocumentGenerator\Tests\TestCase;
@@ -11,10 +10,7 @@ class GeneratePdfTest extends TestCase
 {
     public function test_can_generate_pdf(): void
     {
-
-        $pdfConverter = new PdfConverter(
-            app(DocumentGeneratorConfig::class)
-        );
+        $pdfConverter = app(PdfConverter::class);
 
         if (! $pdfConverter->isAvailable()) {
             $this->markTestSkipped(
@@ -40,8 +36,14 @@ class GeneratePdfTest extends TestCase
             $result->hasPdf()
         );
 
+        $pdfPath = $result->pdfPath();
+
+        $this->assertNotNull(
+            $pdfPath
+        );
+
         $this->assertFileExists(
-            $result->pdfPath()
+            $pdfPath
         );
     }
 }

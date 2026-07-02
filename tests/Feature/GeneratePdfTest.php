@@ -2,22 +2,17 @@
 
 namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
-use PHPUnit\Framework\TestCase;
 use Zaynasheff\DocumentGenerator\Configuration\DocumentGeneratorConfig;
 use Zaynasheff\DocumentGenerator\Converters\PdfConverter;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
+use Zaynasheff\DocumentGenerator\Tests\TestCase;
 
 class GeneratePdfTest extends TestCase
 {
-    private const LIBRE_OFFICE_COMMAND =
-        '/Applications/LibreOffice.app/Contents/MacOS/soffice';
-
     public function test_can_generate_pdf(): void
     {
         $pdfConverter = new PdfConverter(
-            new DocumentGeneratorConfig(
-                self::LIBRE_OFFICE_COMMAND
-            )
+            app(DocumentGeneratorConfig::class)
         );
 
         if (! $pdfConverter->isAvailable()) {

@@ -4,7 +4,7 @@ namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
-use PHPUnit\Framework\TestCase;
+use Zaynasheff\DocumentGenerator\Tests\TestCase;
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 

@@ -47,13 +47,11 @@ final class DocumentGenerator
     private function __construct()
     {
         $this->docxGenerator = new DocxGenerator();
+
         $this->pdfConverter = new PdfConverter(
-            new DocumentGeneratorConfig(
-                '/Applications/LibreOffice.app/Contents/MacOS/soffice'
-            )
+            app(DocumentGeneratorConfig::class)
         );
     }
-
     public static function make(): self
     {
         return new self();

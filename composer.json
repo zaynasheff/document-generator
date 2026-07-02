@@ -29,6 +29,22 @@
     "larastan/larastan": "^3.7",
     "laravel/pint": "^1.24"
   },
+  "scripts": {
+    "test": "phpunit",
+    "analyse": "phpstan analyse",
+    "format": "pint",
+    "format:test": "pint --test",
+    "quality": [
+      "@format:test",
+      "@analyse",
+      "@test"
+    ],
+    "fix": [
+      "@format",
+      "@analyse",
+      "@test"
+    ]
+  },
   "autoload": {
     "psr-4": {
       "Zaynasheff\\DocumentGenerator\\": "src/"

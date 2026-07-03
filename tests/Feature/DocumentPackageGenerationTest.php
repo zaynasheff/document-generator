@@ -274,6 +274,7 @@ class DocumentPackageGenerationTest extends TestCase
             $output.'/contract_3.docx'
         );
     }
+
     public function test_can_generate_merged_pdf_with_multiple_copies(): void
     {
         if (! app(PdfConverter::class)->isAvailable()) {

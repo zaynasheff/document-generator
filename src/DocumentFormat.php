@@ -8,6 +8,17 @@ final class DocumentFormat
 
     public const PDF = 'pdf';
 
+    /**
+     * @return array<string>
+     */
+    public static function all(): array
+    {
+        return [
+            self::DOCX,
+            self::PDF,
+        ];
+    }
+
     private function __construct()
     {
     }

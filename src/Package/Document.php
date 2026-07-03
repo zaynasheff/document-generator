@@ -6,28 +6,35 @@ use Zaynasheff\DocumentGenerator\DocumentFormat;
 
 class Document extends Item
 {
+    /**
+     * Template path.
+     */
     private ?string $template = null;
 
     /**
+     * Template placeholders.
+     *
      * @var array<string, scalar|null>
      */
     private array $values = [];
 
     /**
-     * @var array<string>
+     * Output formats.
+     *
+     * @var list<string>
      */
     private array $formats = [];
+
+    /**
+     * Output filename without extension.
+     */
+    private ?string $name = null;
 
     public function template(string $path): self
     {
         $this->template = $path;
 
         return $this;
-    }
-
-    public function templatePath(): ?string
-    {
-        return $this->template;
     }
 
     /**
@@ -40,6 +47,35 @@ class Document extends Item
         return $this;
     }
 
+    public function name(string $name): self
+    {
+        $this->name = pathinfo(
+            trim($name),
+            PATHINFO_FILENAME
+        );
+
+        return $this;
+    }
+
+    public function docx(): self
+    {
+        return $this->addFormat(
+            DocumentFormat::DOCX
+        );
+    }
+
+    public function pdf(): self
+    {
+        return $this->addFormat(
+            DocumentFormat::PDF
+        );
+    }
+
+    public function templatePath(): ?string
+    {
+        return $this->template;
+    }
+
     /**
      * @return array<string, scalar|null>
      */
@@ -48,32 +84,31 @@ class Document extends Item
         return $this->values;
     }
 
-    public function docx(): self
+    public function documentName(): ?string
     {
-        return $this->addFormat(DocumentFormat::DOCX);
-    }
-
-    public function pdf(): self
-    {
-        return $this->addFormat(DocumentFormat::PDF);
-    }
-
-    public function hasFormat(string $format): bool
-    {
-        return in_array($format, $this->formats, true);
+        return $this->name;
     }
 
     /**
-     * @return array<string>
+     * @return list<string>
      */
     public function formats(): array
     {
         return $this->formats;
     }
 
+    public function hasFormat(string $format): bool
+    {
+        return in_array(
+            $format,
+            $this->formats,
+            true
+        );
+    }
+
     private function addFormat(string $format): self
     {
-        if (! in_array($format, $this->formats, true)) {
+        if (! $this->hasFormat($format)) {
             $this->formats[] = $format;
         }
 

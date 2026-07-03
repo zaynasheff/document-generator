@@ -2,6 +2,7 @@
 
 namespace Zaynasheff\DocumentGenerator;
 
+use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 use Zaynasheff\DocumentGenerator\Generators\PackageGenerator;
 use Zaynasheff\DocumentGenerator\Package\BlankPage;
 use Zaynasheff\DocumentGenerator\Package\Document;
@@ -11,12 +12,12 @@ use Zaynasheff\DocumentGenerator\Result\PackageResult;
 class DocumentPackage
 {
     /**
-     * @var array<Item>
+     * @var Item[]
      */
     private array $items = [];
 
     /**
-     * Package output directory.
+     * Output directory.
      */
     private ?string $output = null;
 
@@ -53,8 +54,14 @@ class DocumentPackage
         return $this;
     }
 
-    public function outputDirectory(): ?string
+    public function outputDirectory(): string
     {
+        if ($this->output === null) {
+            throw new DocumentGeneratorException(
+                'Output directory is not specified.'
+            );
+        }
+
         return $this->output;
     }
 
@@ -71,7 +78,7 @@ class DocumentPackage
     }
 
     /**
-     * @return array<Item>
+     * @return Item[]
      */
     public function items(): array
     {
@@ -95,17 +102,44 @@ class DocumentPackage
 
     public function last(): ?Item
     {
-        $count = count($this->items);
-
-        if ($count === 0) {
+        if ($this->items === []) {
             return null;
         }
 
-        return $this->items[$count - 1];
+        return $this->items[array_key_last($this->items)];
     }
 
     public function generate(): PackageResult
     {
+        $this->validate();
+
         return (new PackageGenerator)->generate($this);
+    }
+
+    private function validate(): void
+    {
+        if ($this->isEmpty()) {
+            throw new DocumentGeneratorException(
+                'Package does not contain any items.'
+            );
+        }
+
+        if ($this->output === null) {
+            throw new DocumentGeneratorException(
+                'Output directory is not specified.'
+            );
+        }
+
+        if (! is_dir($this->output)) {
+            throw new DocumentGeneratorException(
+                'Output directory does not exist.'
+            );
+        }
+
+        if (! is_writable($this->output)) {
+            throw new DocumentGeneratorException(
+                'Output directory is not writable.'
+            );
+        }
     }
 }

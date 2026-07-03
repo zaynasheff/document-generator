@@ -1,4 +1,12 @@
 # Changelog
+## v0.3.0
+
+### Added
+
+- Added `name()` method to `DocumentGenerator`
+- Support custom output filenames for DOCX and PDF generation
+- Automatic filename normalization
+
 
 ## v0.1.1
 

@@ -23,6 +23,12 @@ final class DocumentGeneratorFactory
             ->template($template)
             ->values($document->placeholders());
 
+        if ($document->documentName() !== null) {
+            $generator->name(
+                $document->documentName()
+            );
+        }
+
         foreach ($document->formats() as $format) {
             switch ($format) {
                 case DocumentFormat::DOCX:

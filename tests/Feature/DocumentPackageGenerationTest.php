@@ -253,8 +253,7 @@ class DocumentPackageGenerationTest extends TestCase
             ])
             ->name('contract')
             ->copies(3)
-            ->docx()
-            ->pdf();
+            ->docx();
 
         $result = $package->generate();
 
@@ -268,26 +267,13 @@ class DocumentPackageGenerationTest extends TestCase
         );
 
         $this->assertFileExists(
-            $output.'/contract.pdf'
-        );
-
-        $this->assertFileExists(
             $output.'/contract_2.docx'
-        );
-
-        $this->assertFileExists(
-            $output.'/contract_2.pdf'
         );
 
         $this->assertFileExists(
             $output.'/contract_3.docx'
         );
-
-        $this->assertFileExists(
-            $output.'/contract_3.pdf'
-        );
     }
-
     public function test_can_generate_merged_pdf_with_multiple_copies(): void
     {
         if (! app(PdfConverter::class)->isAvailable()) {

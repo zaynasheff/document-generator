@@ -9,6 +9,8 @@ final class PackageResult
      */
     private array $results = [];
 
+    private ?string $mergedPdf = null;
+
     public function addResult(
         GenerationResult $result
     ): self {
@@ -32,7 +34,7 @@ final class PackageResult
 
     public function isEmpty(): bool
     {
-        return empty($this->results);
+        return $this->results === [];
     }
 
     public function first(): ?GenerationResult
@@ -47,5 +49,23 @@ final class PackageResult
         }
 
         return $this->results[array_key_last($this->results)];
+    }
+
+    public function mergedPdf(
+        string $path
+    ): self {
+        $this->mergedPdf = $path;
+
+        return $this;
+    }
+
+    public function hasMergedPdf(): bool
+    {
+        return $this->mergedPdf !== null;
+    }
+
+    public function mergedPdfPath(): ?string
+    {
+        return $this->mergedPdf;
     }
 }

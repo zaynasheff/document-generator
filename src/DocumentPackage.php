@@ -26,6 +26,11 @@ class DocumentPackage
      */
     private ?string $name = null;
 
+    /**
+     * Merge generated PDF files.
+     */
+    private bool $mergePdf = false;
+
     public static function make(): self
     {
         return new self;
@@ -67,7 +72,10 @@ class DocumentPackage
 
     public function name(string $name): self
     {
-        $this->name = trim($name);
+        $this->name = pathinfo(
+            trim($name),
+            PATHINFO_FILENAME
+        );
 
         return $this;
     }
@@ -75,6 +83,18 @@ class DocumentPackage
     public function packageName(): ?string
     {
         return $this->name;
+    }
+
+    public function mergePdf(): self
+    {
+        $this->mergePdf = true;
+
+        return $this;
+    }
+
+    public function shouldMergePdf(): bool
+    {
+        return $this->mergePdf;
     }
 
     /**
@@ -92,7 +112,7 @@ class DocumentPackage
 
     public function isEmpty(): bool
     {
-        return $this->count() === 0;
+        return $this->items === [];
     }
 
     public function first(): ?Item
@@ -113,7 +133,8 @@ class DocumentPackage
     {
         $this->validate();
 
-        return (new PackageGenerator)->generate($this);
+        return app(PackageGenerator::class)
+            ->generate($this);
     }
 
     private function validate(): void

@@ -145,4 +145,74 @@ class DocumentPackageGenerationTest extends TestCase
             $second->pdfPath()
         );
     }
+
+    public function test_can_generate_merged_pdf_package(): void
+    {
+        if (! app(PdfConverter::class)->isAvailable()) {
+            $this->markTestSkipped(
+                'LibreOffice is not available.'
+            );
+        }
+
+        $output = __DIR__.'/../Fixtures/output';
+
+        $package = DocumentPackage::make();
+
+        $package
+            ->output($output)
+            ->name('package')
+            ->mergePdf();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'John',
+                'LAST_NAME' => 'Anderson',
+                'CITY' => 'Berlin',
+            ])
+            ->name('contract')
+            ->pdf();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'Mike',
+                'LAST_NAME' => 'Smith',
+                'CITY' => 'London',
+            ])
+            ->name('agreement')
+            ->pdf();
+
+        $result = $package->generate();
+
+        $this->assertSame(
+            2,
+            $result->count()
+        );
+
+        $this->assertTrue(
+            $result->hasMergedPdf()
+        );
+
+        $mergedPdf = $result->mergedPdfPath();
+
+        $this->assertNotNull(
+            $mergedPdf
+        );
+
+        $this->assertSame(
+            $output.DIRECTORY_SEPARATOR.'package.pdf',
+            $mergedPdf
+        );
+
+        $this->assertFileExists(
+            $mergedPdf
+        );
+    }
 }

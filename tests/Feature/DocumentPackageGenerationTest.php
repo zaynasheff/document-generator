@@ -14,6 +14,10 @@ class DocumentPackageGenerationTest extends TestCase
 
         $output = __DIR__.'/../Fixtures/output';
 
+        if (! is_dir($output)) {
+            mkdir($output, 0777, true);
+        }
+
         foreach (glob($output.'/*') ?: [] as $file) {
             if (is_file($file)) {
                 unlink($file);

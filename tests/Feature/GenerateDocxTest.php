@@ -16,22 +16,11 @@ class GenerateDocxTest extends TestCase
      */
     public function test_can_generate_docx(): void
     {
-        $template = __DIR__.'/../Fixtures/templates/simple.docx';
-        $output = __DIR__.'/../Fixtures/output';
-
-        if (! is_dir($output)) {
-            mkdir($output, 0777, true);
-        }
-
         $result = DocumentGenerator::make()
-            ->template($template)
-            ->values([
-                'FIRST_NAME' => 'John',
-                'LAST_NAME' => 'Anderson',
-                'CITY' => 'Berlin',
-            ])
+            ->template($this->templatePath())
+            ->values($this->values())
             ->docx()
-            ->output($output)
+            ->output($this->outputDirectory())
             ->generate();
 
         $this->assertTrue(
@@ -66,6 +55,88 @@ class GenerateDocxTest extends TestCase
             'Berlin',
             $xml
         );
+    }
+
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     */
+    public function test_can_generate_docx_with_custom_name(): void
+    {
+        $result = DocumentGenerator::make()
+            ->template($this->templatePath())
+            ->values($this->values())
+            ->name('contract_001')
+            ->docx()
+            ->output($this->outputDirectory())
+            ->generate();
+
+        $this->assertTrue(
+            $result->hasDocx()
+        );
+
+        $docxPath = $result->docxPath();
+
+        $this->assertNotNull(
+            $docxPath
+        );
+
+        $this->assertSame(
+            $this->outputDirectory().DIRECTORY_SEPARATOR.'contract_001.docx',
+            $docxPath
+        );
+
+        $this->assertFileExists(
+            $docxPath
+        );
+    }
+
+    /**
+     * @throws CopyFileException
+     * @throws CreateTemporaryFileException
+     */
+    public function test_name_is_normalized(): void
+    {
+        $result = DocumentGenerator::make()
+            ->template($this->templatePath())
+            ->values($this->values())
+            ->name('contract_001.docx')
+            ->docx()
+            ->output($this->outputDirectory())
+            ->generate();
+
+        $this->assertSame(
+            $this->outputDirectory().DIRECTORY_SEPARATOR.'contract_001.docx',
+            $result->docxPath()
+        );
+    }
+
+    private function templatePath(): string
+    {
+        return __DIR__.'/../Fixtures/templates/simple.docx';
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function values(): array
+    {
+        return [
+            'FIRST_NAME' => 'John',
+            'LAST_NAME' => 'Anderson',
+            'CITY' => 'Berlin',
+        ];
+    }
+
+    private function outputDirectory(): string
+    {
+        $directory = __DIR__.'/../Fixtures/output';
+
+        if (! is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        return $directory;
     }
 
     private function getDocumentXml(

@@ -35,6 +35,11 @@ final class DocumentGenerator
      */
     private string $output;
 
+    /**
+     * Output filename without extension.
+     */
+    private ?string $name = null;
+
     private DocxGenerator $docxGenerator;
 
     private PdfConverter $pdfConverter;
@@ -68,6 +73,16 @@ final class DocumentGenerator
     public function values(array $values): self
     {
         $this->values = $values;
+
+        return $this;
+    }
+
+    public function name(string $name): self
+    {
+        $this->name = pathinfo(
+            trim($name),
+            PATHINFO_FILENAME
+        );
 
         return $this;
     }
@@ -111,11 +126,16 @@ final class DocumentGenerator
         $docxPath = null;
         $pdfPath = null;
 
+        $docxOutputPath = $this->output
+            .DIRECTORY_SEPARATOR
+            .$this->documentName()
+            .'.docx';
+
         if (in_array(DocumentFormat::DOCX, $this->formats, true)) {
             $docxPath = $this->docxGenerator->generate(
                 $this->template,
                 $this->values,
-                $this->output
+                $docxOutputPath
             );
         }
 
@@ -125,7 +145,7 @@ final class DocumentGenerator
                 $docxPath = $this->docxGenerator->generate(
                     $this->template,
                     $this->values,
-                    $this->output
+                    $docxOutputPath
                 );
             }
 
@@ -138,6 +158,18 @@ final class DocumentGenerator
         return new GenerationResult(
             $docxPath,
             $pdfPath
+        );
+    }
+
+    private function documentName(): string
+    {
+        if ($this->name !== null) {
+            return $this->name;
+        }
+
+        return pathinfo(
+            $this->template,
+            PATHINFO_FILENAME
         );
     }
 

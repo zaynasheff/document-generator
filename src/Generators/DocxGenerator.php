@@ -12,7 +12,7 @@ final class DocxGenerator
     public function generate(
         string $template,
         array $values,
-        string $output
+        string $path
     ): string {
 
         $processor = new TemplateProcessor(
@@ -25,13 +25,6 @@ final class DocxGenerator
                 (string) $value
             );
         }
-
-        $path = rtrim(
-            $output,
-            DIRECTORY_SEPARATOR
-        ).DIRECTORY_SEPARATOR.basename(
-            $template
-        );
 
         $processor->saveAs(
             $path

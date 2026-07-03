@@ -74,4 +74,38 @@ class DocumentTest extends TestCase
             $document->formats()
         );
     }
+
+    public function test_document_has_one_copy_by_default(): void
+    {
+        $document = new Document;
+
+        $this->assertSame(
+            1,
+            $document->copiesCount()
+        );
+    }
+
+    public function test_can_set_document_copies(): void
+    {
+        $document = new Document;
+
+        $document->copies(5);
+
+        $this->assertSame(
+            5,
+            $document->copiesCount()
+        );
+    }
+
+    public function test_document_copies_cannot_be_less_than_one(): void
+    {
+        $document = new Document;
+
+        $document->copies(0);
+
+        $this->assertSame(
+            1,
+            $document->copiesCount()
+        );
+    }
 }

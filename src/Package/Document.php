@@ -114,4 +114,21 @@ class Document extends Item
 
         return $this;
     }
+
+    private int $copies = 1;
+
+    public function copies(int $count): self
+    {
+        $this->copies = max(
+            1,
+            $count
+        );
+
+        return $this;
+    }
+
+    public function copiesCount(): int
+    {
+        return $this->copies;
+    }
 }

@@ -8,6 +8,19 @@ use Zaynasheff\DocumentGenerator\Tests\TestCase;
 
 class DocumentPackageGenerationTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $output = __DIR__.'/../Fixtures/output';
+
+        foreach (glob($output.'/*') ?: [] as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+    }
+
     public function test_can_generate_single_document_package(): void
     {
         if (! app(PdfConverter::class)->isAvailable()) {
@@ -213,6 +226,120 @@ class DocumentPackageGenerationTest extends TestCase
 
         $this->assertFileExists(
             $mergedPdf
+        );
+    }
+
+    public function test_can_generate_multiple_document_copies(): void
+    {
+        $output = __DIR__.'/../Fixtures/output';
+
+        $package = DocumentPackage::make();
+
+        $package->output($output);
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'John',
+                'LAST_NAME' => 'Anderson',
+                'CITY' => 'Berlin',
+            ])
+            ->name('contract')
+            ->copies(3)
+            ->docx()
+            ->pdf();
+
+        $result = $package->generate();
+
+        $this->assertSame(
+            3,
+            $result->count()
+        );
+
+        $this->assertFileExists(
+            $output.'/contract.docx'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_2.docx'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_2.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_3.docx'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_3.pdf'
+        );
+    }
+
+    public function test_can_generate_merged_pdf_with_multiple_copies(): void
+    {
+        if (! app(PdfConverter::class)->isAvailable()) {
+            $this->markTestSkipped(
+                'LibreOffice is not available.'
+            );
+        }
+
+        $output = __DIR__.'/../Fixtures/output';
+
+        $package = DocumentPackage::make();
+
+        $package
+            ->output($output)
+            ->name('documents')
+            ->mergePdf();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'John',
+                'LAST_NAME' => 'Anderson',
+                'CITY' => 'Berlin',
+            ])
+            ->name('contract')
+            ->copies(3)
+            ->pdf();
+
+        $result = $package->generate();
+
+        $this->assertSame(
+            3,
+            $result->count()
+        );
+
+        $this->assertTrue(
+            $result->hasMergedPdf()
+        );
+
+        $this->assertFileExists(
+            $output.'/contract.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_2.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/contract_3.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/documents.pdf'
         );
     }
 }

@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.3.0]
+
+### Added
+
+- Multiple document copies
+- `Document::copies()`
+- Automatic copy filename generation
+- Integration tests for document copies
+
+### Changed
+
+- Improved package generation pipeline
+
 ---
 
 ## [0.2.0]

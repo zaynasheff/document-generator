@@ -33,17 +33,30 @@ final class PackageGenerator
                 continue;
             }
 
-            $generator = $this->factory->make($item);
+            for (
+                $copy = 1;
+                $copy <= $item->copiesCount();
+                $copy++
+            ) {
+                $generator = $this->factory->make($item);
 
-            $generator->output(
-                $package->outputDirectory()
-            );
+                $generator
+                    ->output(
+                        $package->outputDirectory()
+                    )
+                    ->name(
+                        $this->documentName(
+                            $item,
+                            $copy
+                        )
+                    );
 
-            $generationResult = $generator->generate();
+                $generationResult = $generator->generate();
 
-            $result->addResult(
-                $generationResult
-            );
+                $result->addResult(
+                    $generationResult
+                );
+            }
         }
 
         if ($package->shouldMergePdf()) {
@@ -94,6 +107,36 @@ final class PackageGenerator
 
         $result->mergedPdf(
             $destination
+        );
+    }
+
+    private function documentName(
+        Document $document,
+        int $copy
+    ): string {
+        $name = $document->documentName();
+
+        if ($name === null) {
+            $template = $document->templatePath();
+
+            $name = pathinfo(
+                $template ?? 'document',
+                PATHINFO_FILENAME
+            );
+        }
+
+        if ($document->copiesCount() === 1) {
+            return $name;
+        }
+
+        if ($copy === 1) {
+            return $name;
+        }
+
+        return sprintf(
+            '%s_%d',
+            $name,
+            $copy
         );
     }
 }

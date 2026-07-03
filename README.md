@@ -219,6 +219,7 @@ contract_001.pdf
 
 ---
 
+
 ## Generation Result
 
 The `generate()` method returns a `GenerationResult`.
@@ -388,6 +389,39 @@ documents/
 
     package.pdf
 ```
+
+---
+
+# Multiple Copies
+
+Generate multiple copies of the same document.
+
+```php
+$package = DocumentPackage::make();
+
+$package
+    ->output(storage_path('documents'));
+
+$package
+    ->addDocument()
+    ->template($template)
+    ->values($values)
+    ->name('contract')
+    ->copies(3)
+    ->pdf();
+
+$result = $package->generate();
+```
+
+Generated files:
+
+```
+contract.pdf
+contract_2.pdf
+contract_3.pdf
+```
+
+Copies are generated in the specified order and are automatically included in merged PDF packages.
 
 ---
 

@@ -78,4 +78,28 @@ class DocumentPackageTest extends TestCase
             $result
         );
     }
+
+    public function test_can_set_output_directory(): void
+    {
+        $package = DocumentPackage::make();
+
+        $package->output('/tmp/documents');
+
+        $this->assertSame(
+            '/tmp/documents',
+            $package->outputDirectory()
+        );
+    }
+
+    public function test_can_set_package_name(): void
+    {
+        $package = DocumentPackage::make();
+
+        $package->name('contract_123');
+
+        $this->assertSame(
+            'contract_123',
+            $package->packageName()
+        );
+    }
 }

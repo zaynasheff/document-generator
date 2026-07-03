@@ -15,6 +15,16 @@ class DocumentPackage
      */
     private array $items = [];
 
+    /**
+     * Package output directory.
+     */
+    private ?string $output = null;
+
+    /**
+     * Package name.
+     */
+    private ?string $name = null;
+
     public static function make(): self
     {
         return new self;
@@ -34,6 +44,30 @@ class DocumentPackage
         $this->items[] = new BlankPage;
 
         return $this;
+    }
+
+    public function output(string $directory): self
+    {
+        $this->output = $directory;
+
+        return $this;
+    }
+
+    public function outputDirectory(): ?string
+    {
+        return $this->output;
+    }
+
+    public function name(string $name): self
+    {
+        $this->name = trim($name);
+
+        return $this;
+    }
+
+    public function packageName(): ?string
+    {
+        return $this->name;
     }
 
     /**

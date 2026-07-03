@@ -1,8 +1,25 @@
 # Document Generator
 
-Generate **DOCX** and **PDF** documents from Microsoft Word templates using **PHPWord** and **LibreOffice**.
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/zaynasheff/document-generator.svg?style=flat-square)](...)
+[![Tests](https://img.shields.io/github/actions/workflow/status/zaynasheff/document-generator/tests.yml?branch=main)](...)
+[![PHP Version](https://img.shields.io/packagist/php-v/zaynasheff/document-generator)](...)
+[![License](https://img.shields.io/packagist/l/zaynasheff/document-generator)](...)
 
-Document Generator provides a simple and fluent API for generating DOCX documents from templates and optionally converting them to PDF.
+Generate **DOCX**, **PDF**, and **merged PDF packages** from Microsoft Word templates using **PHPWord** and **LibreOffice**.
+
+Document Generator is a Laravel package that provides a fluent API for generating documents from DOCX templates, converting them to PDF, generating multiple documents in a single operation, and merging them into one PDF package.
+
+## Contents
+
+- Features
+- Installation
+- Configuration
+- Basic Usage
+- Package Generation
+- API Reference
+- Testing
+- Contributing
+- License
 
 ---
 
@@ -10,20 +27,23 @@ Document Generator provides a simple and fluent API for generating DOCX document
 
 - Generate DOCX documents from Microsoft Word templates
 - Replace template placeholders
-- Convert generated DOCX files to PDF
+- Generate PDF documents using LibreOffice
+- Generate multiple documents in a single operation
+- Merge generated PDF documents into a single package
+- Custom output filenames
 - Fluent and expressive API
-- Laravel package auto-discovery
-- Configurable LibreOffice binary
+- Laravel auto-discovery
+- Configurable LibreOffice executable
 - PHPUnit tested
 - PHPStan (max level)
 - Laravel Pint
-- GitHub Actions CI
+- GitHub Actions ready
 
 ---
 
 ## Requirements
 
-- PHP 7.4+
+- PHP 7.4 or higher
 - Laravel 8+
 - LibreOffice (required only for PDF generation)
 
@@ -31,13 +51,13 @@ Document Generator provides a simple and fluent API for generating DOCX document
 
 ## Installation
 
-Install the package using Composer:
+Install the package using Composer.
 
 ```bash
 composer require zaynasheff/document-generator
 ```
 
-Publish the configuration file:
+Publish the configuration file.
 
 ```bash
 php artisan vendor:publish --tag=document-generator-config
@@ -47,7 +67,7 @@ php artisan vendor:publish --tag=document-generator-config
 
 ## Configuration
 
-Set the path to the LibreOffice executable in your `.env` file.
+Set the LibreOffice executable in your `.env`.
 
 Default:
 
@@ -61,25 +81,23 @@ DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
 DOCUMENT_GENERATOR_OFFICE_BINARY=/Applications/LibreOffice.app/Contents/MacOS/soffice
 ```
 
-### Windows
-
-```env
-DOCUMENT_GENERATOR_OFFICE_BINARY="C:\Program Files\LibreOffice\program\soffice.exe"
-```
-
 ### Linux
 
 ```env
 DOCUMENT_GENERATOR_OFFICE_BINARY=/usr/bin/soffice
 ```
 
-> **Note**
->
-> If `soffice` is available in your system `PATH`, you can simply use:
->
-> ```env
-> DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
-> ```
+### Windows
+
+```env
+DOCUMENT_GENERATOR_OFFICE_BINARY="C:\Program Files\LibreOffice\program\soffice.exe"
+```
+
+If LibreOffice is available in your system `PATH`, simply use:
+
+```env
+DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
+```
 
 ---
 
@@ -106,13 +124,15 @@ return [
 
 ## Basic Usage
 
-Generate both DOCX and PDF:
+Generate both DOCX and PDF.
 
 ```php
 use Zaynasheff\DocumentGenerator\DocumentGenerator;
 
 $result = DocumentGenerator::make()
-    ->template(storage_path('templates/contract.docx'))
+    ->template(
+        storage_path('templates/contract.docx')
+    )
     ->values([
         'FIRST_NAME' => 'John',
         'LAST_NAME'  => 'Anderson',
@@ -120,13 +140,17 @@ $result = DocumentGenerator::make()
     ])
     ->docx()
     ->pdf()
-    ->output(storage_path('documents'))
+    ->output(
+        storage_path('documents')
+    )
     ->generate();
 ```
 
 ---
 
 ## Generate DOCX Only
+
+Generate a Microsoft Word document without creating a PDF.
 
 ```php
 $result = DocumentGenerator::make()
@@ -141,6 +165,8 @@ $result = DocumentGenerator::make()
 
 ## Generate PDF Only
 
+Generate only a PDF document.
+
 ```php
 $result = DocumentGenerator::make()
     ->template($template)
@@ -152,9 +178,50 @@ $result = DocumentGenerator::make()
 
 ---
 
+## Generate DOCX and PDF
+
+Generate both formats in a single operation.
+
+```php
+$result = DocumentGenerator::make()
+    ->template($template)
+    ->values($values)
+    ->docx()
+    ->pdf()
+    ->output($output)
+    ->generate();
+```
+
+---
+
+## Custom Output Filename
+
+By default the generated filename is based on the template filename.
+
+Use `name()` to specify your own filename.
+
+```php
+$result = DocumentGenerator::make()
+    ->template($template)
+    ->values($values)
+    ->name('contract_001')
+    ->pdf()
+    ->output($output)
+    ->generate();
+```
+
+Generated files:
+
+```
+contract_001.docx
+contract_001.pdf
+```
+
+---
+
 ## Generation Result
 
-The `generate()` method returns a `GenerationResult` instance.
+The `generate()` method returns a `GenerationResult`.
 
 ```php
 $result->hasDocx();
@@ -170,15 +237,294 @@ Example:
 
 ```php
 if ($result->hasPdf()) {
+
     return response()->download(
         $result->pdfPath()
     );
+
 }
 ```
 
 ---
 
-## API Reference
+## Multiple Placeholder Values
+
+Template placeholders are passed as an associative array.
+
+```php
+$result = DocumentGenerator::make()
+    ->template($template)
+    ->values([
+        'FIRST_NAME' => 'John',
+        'LAST_NAME'  => 'Anderson',
+        'CITY'       => 'Berlin',
+        'EMAIL'      => 'john@example.com',
+        'PHONE'      => '+1 555 123 45 67',
+    ])
+    ->pdf()
+    ->output($output)
+    ->generate();
+```
+
+---
+
+## Supported Placeholder Types
+
+The following value types are supported:
+
+- string
+- integer
+- float
+- boolean
+- null
+
+Example:
+
+```php
+->values([
+    'NAME'      => 'John',
+    'AGE'       => 35,
+    'BALANCE'   => 1500.75,
+    'ACTIVE'    => true,
+    'COMMENT'   => null,
+])
+```
+
+---
+
+# Package Generation
+
+Generate multiple documents in a single operation.
+
+```php
+use Zaynasheff\DocumentGenerator\DocumentPackage;
+
+$package = DocumentPackage::make();
+
+$package->output(
+    storage_path('documents')
+);
+
+$package
+    ->addDocument()
+    ->template(
+        storage_path('templates/contract.docx')
+    )
+    ->values([
+        'FIRST_NAME' => 'John',
+        'LAST_NAME'  => 'Anderson',
+    ])
+    ->name('contract')
+    ->pdf();
+
+$package
+    ->addDocument()
+    ->template(
+        storage_path('templates/invoice.docx')
+    )
+    ->values([
+        'FIRST_NAME' => 'John',
+    ])
+    ->name('invoice')
+    ->pdf();
+
+$result = $package->generate();
+```
+
+Generated files:
+
+```
+documents/
+    contract.docx
+    contract.pdf
+
+    invoice.docx
+    invoice.pdf
+```
+
+---
+
+# Merge PDF
+
+Automatically merge all generated PDF files into a single document.
+
+```php
+$package = DocumentPackage::make();
+
+$package
+    ->output(
+        storage_path('documents')
+    )
+    ->name('package')
+    ->mergePdf();
+
+$package
+    ->addDocument()
+    ->template($contractTemplate)
+    ->values($contractValues)
+    ->name('contract')
+    ->pdf();
+
+$package
+    ->addDocument()
+    ->template($invoiceTemplate)
+    ->values($invoiceValues)
+    ->name('invoice')
+    ->pdf();
+
+$result = $package->generate();
+```
+
+Generated files:
+
+```
+documents/
+
+    contract.docx
+    contract.pdf
+
+    invoice.docx
+    invoice.pdf
+
+    package.pdf
+```
+
+---
+
+# Package Result
+
+Package generation returns a `PackageResult`.
+
+```php
+$result->count();
+
+$result->results();
+
+$result->hasMergedPdf();
+
+$result->mergedPdfPath();
+```
+
+Example:
+
+```php
+if ($result->hasMergedPdf()) {
+
+    return response()->download(
+        $result->mergedPdfPath()
+    );
+
+}
+```
+
+---
+
+# Complete Package Example
+
+```php
+use Zaynasheff\DocumentGenerator\DocumentPackage;
+
+$package = DocumentPackage::make();
+
+$package
+    ->output(
+        storage_path('documents')
+    )
+    ->name('contracts')
+    ->mergePdf();
+
+$package
+    ->addDocument()
+    ->template(
+        storage_path('templates/contract.docx')
+    )
+    ->values([
+        'FIRST_NAME' => 'John',
+        'LAST_NAME'  => 'Anderson',
+        'CITY'       => 'Berlin',
+    ])
+    ->name('contract')
+    ->pdf();
+
+$package
+    ->addDocument()
+    ->template(
+        storage_path('templates/invoice.docx')
+    )
+    ->values([
+        'FIRST_NAME' => 'John',
+        'AMOUNT'     => '1500 €',
+    ])
+    ->name('invoice')
+    ->pdf();
+
+$result = $package->generate();
+
+if ($result->hasMergedPdf()) {
+
+    return response()->download(
+        $result->mergedPdfPath()
+    );
+
+}
+```
+
+---
+
+# Current Capabilities
+
+✅ DOCX generation
+
+✅ PDF generation
+
+✅ Custom output filenames
+
+✅ Multiple document generation
+
+✅ PDF package generation
+
+✅ Merged PDF packages
+
+✅ Fluent API
+
+✅ Laravel auto-discovery
+
+
+---
+
+# Why Document Generator?
+
+Document Generator focuses on simplicity and readability.
+
+```php
+$result = DocumentPackage::make()
+    ->output($output)
+    ->name('contracts')
+    ->mergePdf();
+
+$result
+    ->addDocument()
+    ->template($contract)
+    ->values($contractData)
+    ->pdf();
+
+$result
+    ->addDocument()
+    ->template($invoice)
+    ->values($invoiceData)
+    ->pdf();
+
+$result = $result->generate();
+```
+
+The package hides all low-level details of DOCX generation, PDF conversion and PDF merging behind a clean, fluent API.
+
+
+---
+
+# API Reference
+
+## DocumentGenerator
 
 ### template(string $template)
 
@@ -199,6 +545,16 @@ Sets template placeholder values.
     'FIRST_NAME' => 'John',
     'LAST_NAME'  => 'Smith',
 ])
+```
+
+---
+
+### name(string $name)
+
+Sets the output filename without extension.
+
+```php
+->name('contract')
 ```
 
 ---
@@ -235,46 +591,164 @@ Sets the output directory.
 
 ### generate()
 
-Generates the requested document(s) and returns a `GenerationResult`.
+Generates the requested document(s).
 
 ```php
 $result = DocumentGenerator::make()
     ->template($template)
     ->values($values)
-    ->docx()
+    ->pdf()
     ->output($output)
     ->generate();
 ```
 
 ---
 
-## Testing
+# DocumentPackage
 
-Run PHPUnit:
+### addDocument()
+
+Adds a document to the package.
+
+```php
+$package->addDocument();
+```
+
+---
+
+### output(string $directory)
+
+Sets the package output directory.
+
+```php
+$package->output(
+    storage_path('documents')
+);
+```
+
+---
+
+### name(string $name)
+
+Sets the merged PDF filename.
+
+```php
+$package->name('contracts');
+```
+
+Produces:
+
+```
+contracts.pdf
+```
+
+---
+
+### mergePdf()
+
+Enables automatic PDF merging.
+
+```php
+$package->mergePdf();
+```
+
+---
+
+### generate()
+
+Generates the complete package.
+
+```php
+$result = $package->generate();
+```
+
+---
+
+# GenerationResult
+
+```php
+$result->hasDocx();
+
+$result->docxPath();
+
+$result->hasPdf();
+
+$result->pdfPath();
+```
+
+---
+
+# PackageResult
+
+```php
+$result->count();
+
+$result->results();
+
+$result->hasMergedPdf();
+
+$result->mergedPdfPath();
+```
+
+---
+
+# Error Handling
+
+All package exceptions extend:
+
+```php
+Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException
+```
+
+Example:
+
+```php
+use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
+
+try {
+
+    $result = DocumentGenerator::make()
+        ->template($template)
+        ->pdf()
+        ->output($output)
+        ->generate();
+
+} catch (DocumentGeneratorException $exception) {
+
+    report($exception);
+
+}
+```
+
+---
+
+# Testing
+
+Run PHPUnit.
 
 ```bash
 composer test
 ```
 
-Run PHPStan:
+Run PHPStan.
 
 ```bash
 composer analyse
 ```
 
-Run Pint:
+Run Laravel Pint.
 
 ```bash
 composer format:test
 ```
 
-Run all quality checks:
+Run the complete quality pipeline.
 
 ```bash
 composer quality
 ```
 
-Automatically fix code style:
+Automatically fix coding style.
 
 ```bash
 composer fix
@@ -282,18 +756,37 @@ composer fix
 
 ---
 
-## Contributing
+# Contributing
 
 Contributions are welcome.
 
-Before opening a Pull Request, please make sure all quality checks pass:
+Before opening a Pull Request, please make sure all quality checks pass.
 
 ```bash
 composer quality
 ```
 
+Please follow the existing coding style and architecture.
+
 ---
 
-## License
+# Roadmap
+
+The following features are planned for future releases.
+
+- Blank pages inside document packages
+- Multiple document copies
+- ZIP package generation
+- Watermarks
+- Page numbering
+- Digital signatures
+
+---
+
+# License
 
 The MIT License (MIT).
+
+---
+
+Made with ❤️ for the Laravel community.

@@ -1,6 +1,6 @@
 {
     "name": "zaynasheff/document-generator",
-    "description": "Generate DOCX and PDF documents from DOCX templates using PHPWord and LibreOffice.",
+    "description": "Generate DOCX documents and PDF packages from Microsoft Word templates.",
     "type": "library",
     "license": "MIT",
 
@@ -13,8 +13,11 @@
         "phpword",
         "libreoffice",
         "document",
+        "documents",
         "template",
-        "word"
+        "word",
+        "office",
+        "generator"
     ],
 
     "authors": [

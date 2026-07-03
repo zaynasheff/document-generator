@@ -5,6 +5,7 @@ namespace Zaynasheff\DocumentGenerator\Generators;
 use Zaynasheff\DocumentGenerator\DocumentPackage;
 use Zaynasheff\DocumentGenerator\Factories\DocumentGeneratorFactory;
 use Zaynasheff\DocumentGenerator\Mergers\PdfMerger;
+use Zaynasheff\DocumentGenerator\Package\BlankPage;
 use Zaynasheff\DocumentGenerator\Package\Document;
 use Zaynasheff\DocumentGenerator\Result\PackageResult;
 
@@ -14,12 +15,16 @@ final class PackageGenerator
 
     private PdfMerger $pdfMerger;
 
+    private BlankPageGenerator $blankPageGenerator;
+
     public function __construct(
         ?DocumentGeneratorFactory $factory = null,
-        ?PdfMerger $pdfMerger = null
+        ?PdfMerger $pdfMerger = null,
+        ?BlankPageGenerator $blankPageGenerator = null
     ) {
         $this->factory = $factory ?? new DocumentGeneratorFactory;
         $this->pdfMerger = $pdfMerger ?? new PdfMerger;
+        $this->blankPageGenerator = $blankPageGenerator ?? new BlankPageGenerator;
     }
 
     public function generate(
@@ -27,7 +32,22 @@ final class PackageGenerator
     ): PackageResult {
         $result = new PackageResult;
 
+        $pdfFiles = [];
+        $temporaryFiles = [];
+
         foreach ($package->items() as $item) {
+
+            if ($item instanceof BlankPage) {
+
+                $blankPdf = $this
+                    ->blankPageGenerator
+                    ->temporary();
+
+                $temporaryFiles[] = $blankPdf;
+                $pdfFiles[] = $blankPdf;
+
+                continue;
+            }
 
             if (! $item instanceof Document) {
                 continue;
@@ -56,58 +76,48 @@ final class PackageGenerator
                 $result->addResult(
                     $generationResult
                 );
+
+                if ($generationResult->hasPdf()) {
+
+                    $pdf = $generationResult->pdfPath();
+
+                    if ($pdf !== null) {
+                        $pdfFiles[] = $pdf;
+                    }
+                }
             }
         }
 
-        if ($package->shouldMergePdf()) {
-            $this->mergePdf(
-                $package,
-                $result
+        if (
+            $package->shouldMergePdf()
+            && $pdfFiles !== []
+        ) {
+            $destination = rtrim(
+                $package->outputDirectory(),
+                DIRECTORY_SEPARATOR
+            )
+                .DIRECTORY_SEPARATOR
+                .($package->packageName() ?? 'package')
+                .'.pdf';
+
+            $this->pdfMerger->merge(
+                $pdfFiles,
+                $destination
             );
+
+            $result->mergedPdf(
+                $destination
+            );
+
+            foreach ($temporaryFiles as $file) {
+
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
         }
 
         return $result;
-    }
-
-    private function mergePdf(
-        DocumentPackage $package,
-        PackageResult $result
-    ): void {
-        $files = [];
-
-        foreach ($result->results() as $generationResult) {
-
-            if (! $generationResult->hasPdf()) {
-                continue;
-            }
-
-            $pdf = $generationResult->pdfPath();
-
-            if ($pdf !== null) {
-                $files[] = $pdf;
-            }
-        }
-
-        if ($files === []) {
-            return;
-        }
-
-        $destination = rtrim(
-            $package->outputDirectory(),
-            DIRECTORY_SEPARATOR
-        )
-            .DIRECTORY_SEPARATOR
-            .($package->packageName() ?? 'package')
-            .'.pdf';
-
-        $this->pdfMerger->merge(
-            $files,
-            $destination
-        );
-
-        $result->mergedPdf(
-            $destination
-        );
     }
 
     private function documentName(

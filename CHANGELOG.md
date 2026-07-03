@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.4.0]
+
+### Added
+
+- Blank page support in document packages
+- BlankPageGenerator
+- Blank page integration tests
+
+### Changed
+
+- Improved PDF package generation
+- Added validation for blank pages without PDF merging
+
 ## [0.3.0]
 
 ### Added

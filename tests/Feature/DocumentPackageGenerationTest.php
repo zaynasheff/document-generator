@@ -4,6 +4,7 @@ namespace Zaynasheff\DocumentGenerator\Tests\Feature;
 
 use Zaynasheff\DocumentGenerator\Converters\PdfConverter;
 use Zaynasheff\DocumentGenerator\DocumentPackage;
+use Zaynasheff\DocumentGenerator\Exceptions\DocumentGeneratorException;
 use Zaynasheff\DocumentGenerator\Tests\TestCase;
 
 class DocumentPackageGenerationTest extends TestCase
@@ -331,6 +332,173 @@ class DocumentPackageGenerationTest extends TestCase
 
         $this->assertFileExists(
             $output.'/documents.pdf'
+        );
+    }
+
+    public function test_blank_page_requires_pdf_merge(): void
+    {
+        $this->expectException(
+            DocumentGeneratorException::class
+        );
+
+        $this->expectExceptionMessage(
+            'Blank pages require PDF merging.'
+        );
+
+        $package = DocumentPackage::make();
+
+        $package
+            ->output(
+                __DIR__.'/../Fixtures/output'
+            );
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'John',
+            ])
+            ->pdf();
+
+        $package->addBlankPage();
+
+        $package->generate();
+    }
+
+    public function test_can_generate_package_with_blank_page(): void
+    {
+        if (! app(PdfConverter::class)->isAvailable()) {
+            $this->markTestSkipped(
+                'LibreOffice is not available.'
+            );
+        }
+
+        $output = __DIR__.'/../Fixtures/output';
+
+        $package = DocumentPackage::make();
+
+        $package
+            ->output($output)
+            ->name('package_with_blank_page')
+            ->mergePdf();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'John',
+            ])
+            ->name('contract')
+            ->pdf();
+
+        $package->addBlankPage();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'Mike',
+            ])
+            ->name('invoice')
+            ->pdf();
+
+        $result = $package->generate();
+
+        $this->assertSame(
+            2,
+            $result->count()
+        );
+
+        $this->assertTrue(
+            $result->hasMergedPdf()
+        );
+
+        $this->assertFileExists(
+            $output.'/contract.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/invoice.pdf'
+        );
+
+        $this->assertFileExists(
+            $output.'/package.pdf'
+        );
+    }
+
+    public function test_can_generate_package_with_multiple_blank_pages(): void
+    {
+        if (! app(PdfConverter::class)->isAvailable()) {
+            $this->markTestSkipped(
+                'LibreOffice is not available.'
+            );
+        }
+
+        $output = __DIR__.'/../Fixtures/output';
+
+        $package = DocumentPackage::make();
+
+        $package
+            ->output($output)
+            ->name('package_with_blank_pages')
+            ->mergePdf();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'One',
+            ])
+            ->name('one')
+            ->pdf();
+
+        $package->addBlankPage();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'Two',
+            ])
+            ->name('two')
+            ->pdf();
+
+        $package->addBlankPage();
+
+        $package
+            ->addDocument()
+            ->template(
+                __DIR__.'/../Fixtures/templates/simple.docx'
+            )
+            ->values([
+                'FIRST_NAME' => 'Three',
+            ])
+            ->name('three')
+            ->pdf();
+
+        $result = $package->generate();
+
+        $this->assertSame(
+            3,
+            $result->count()
+        );
+
+        $this->assertTrue(
+            $result->hasMergedPdf()
+        );
+
+        $this->assertFileExists(
+            $output.'/package.pdf'
         );
     }
 }

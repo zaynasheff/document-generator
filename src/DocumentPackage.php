@@ -137,6 +137,17 @@ class DocumentPackage
             ->generate($this);
     }
 
+    private function containsBlankPage(): bool
+    {
+        foreach ($this->items as $item) {
+            if ($item instanceof BlankPage) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function validate(): void
     {
         if ($this->isEmpty()) {
@@ -160,6 +171,15 @@ class DocumentPackage
         if (! is_writable($this->output)) {
             throw new DocumentGeneratorException(
                 'Output directory is not writable.'
+            );
+        }
+
+        if (
+            $this->containsBlankPage()
+            && ! $this->mergePdf
+        ) {
+            throw new DocumentGeneratorException(
+                'Blank pages require PDF merging.'
             );
         }
     }

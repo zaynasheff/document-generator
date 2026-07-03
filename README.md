@@ -392,7 +392,7 @@ documents/
 
 ---
 
-# Multiple Copies
+## Multiple Copies
 
 Generate multiple copies of the same document.
 
@@ -422,6 +422,43 @@ contract_3.pdf
 ```
 
 Copies are generated in the specified order and are automatically included in merged PDF packages.
+
+---
+
+## Blank Pages
+
+Insert blank pages between generated documents when creating a merged PDF.
+
+```php
+use Zaynasheff\DocumentGenerator\DocumentPackage;
+
+$package = DocumentPackage::make();
+
+$package
+    ->output(storage_path('documents'))
+    ->name('contracts')
+    ->mergePdf();
+
+$package
+    ->addDocument()
+    ->template($template1)
+    ->values($values1)
+    ->pdf();
+
+$package->addBlankPage();
+
+$package
+    ->addDocument()
+    ->template($template2)
+    ->values($values2)
+    ->pdf();
+
+$result = $package->generate();
+```
+
+Blank pages are supported only when PDF merging is enabled.
+
+If a blank page is added without calling `mergePdf()`, a `DocumentGeneratorException` will be thrown.
 
 ---
 

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.5.1]
+
+### Fixed
+
+- Passed the configured LibreOffice profile to the converter
+- Fixed `DOCUMENT_GENERATOR_OFFICE_PROFILE` configuration handling
+
 ## [0.5.0]
 
 ### Added

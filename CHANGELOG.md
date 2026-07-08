@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog.
 
+## [0.5.0]
+
+### Added
+
+* Optional LibreOffice profile configuration
+* `DOCUMENT_GENERATOR_OFFICE_PROFILE` environment variable
+* Automatic LibreOffice profile directory creation
+
+### Changed
+
+* Improved LibreOffice compatibility in Docker and PHP-FPM environments
+* Improved PDF conversion reliability in headless environments
+
+
 ## [0.4.0]
 
 ### Added

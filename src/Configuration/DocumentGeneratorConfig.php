@@ -11,24 +11,27 @@ final class DocumentGeneratorConfig
      * - soffice
      * - /Applications/LibreOffice.app/Contents/MacOS/soffice
      * - docker exec libreoffice soffice
-     *
-     * @var string
      */
-    private $officeCommand;
+    private string $officeCommand;
 
     /**
      * Process timeout in seconds.
-     *
-     * @var int
      */
-    private $timeout;
+    private int $timeout;
+
+    /**
+     * LibreOffice user profile.
+     */
+    private ?string $officeProfile;
 
     public function __construct(
         string $officeCommand = 'soffice',
-        int $timeout = 60
+        int $timeout = 60,
+        ?string $officeProfile = null
     ) {
         $this->officeCommand = $officeCommand;
         $this->timeout = $timeout;
+        $this->officeProfile = $officeProfile;
     }
 
     public function officeCommand(): string
@@ -39,5 +42,10 @@ final class DocumentGeneratorConfig
     public function timeout(): int
     {
         return $this->timeout;
+    }
+
+    public function officeProfile(): ?string
+    {
+        return $this->officeProfile;
     }
 }

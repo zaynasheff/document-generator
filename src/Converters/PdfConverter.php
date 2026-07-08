@@ -77,11 +77,29 @@ final class PdfConverter
         string $docx,
         string $outputDirectory
     ): string {
-        return sprintf(
-            '%s --headless --convert-to pdf --outdir %s %s',
+        $command = [
             $this->config->officeCommand(),
-            escapeshellarg($outputDirectory),
-            escapeshellarg($docx)
-        );
+        ];
+
+        if ($this->config->officeProfile() !== null) {
+
+            if (! is_dir($this->config->officeProfile())) {
+                mkdir($this->config->officeProfile(), 0777, true);
+            }
+
+            $command[] = sprintf(
+                '-env:UserInstallation=file://%s',
+                $this->config->officeProfile(),
+            );
+        }
+
+        $command[] = '--headless';
+        $command[] = '--convert-to';
+        $command[] = 'pdf';
+        $command[] = '--outdir';
+        $command[] = escapeshellarg($outputDirectory);
+        $command[] = escapeshellarg($docx);
+
+        return implode(' ', $command);
     }
 }

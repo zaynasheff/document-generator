@@ -73,6 +73,8 @@ Default:
 
 ```env
 DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
+DOCUMENT_GENERATOR_OFFICE_PROFILE=
+DOCUMENT_GENERATOR_TIMEOUT=60
 ```
 
 ### macOS
@@ -99,6 +101,14 @@ If LibreOffice is available in your system `PATH`, simply use:
 DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
 ```
 
+`DOCUMENT_GENERATOR_OFFICE_PROFILE` is optional. It can be used in Docker, PHP-FPM or other headless environments where LibreOffice cannot initialize its default user profile.
+
+Example:
+
+```env
+DOCUMENT_GENERATOR_OFFICE_PROFILE="/tmp/document-generator-profile"
+```
+
 ---
 
 ## Configuration File
@@ -106,6 +116,7 @@ DOCUMENT_GENERATOR_OFFICE_BINARY=soffice
 ```php
 return [
 
+  
     'libreoffice' => [
 
         'binary' => env(
@@ -113,9 +124,15 @@ return [
             'soffice'
         ),
 
-        'timeout' => 60,
+        'timeout' => env(
+            'DOCUMENT_GENERATOR_TIMEOUT',
+            60
+        ),
+        'profile' => env(
+            'DOCUMENT_GENERATOR_OFFICE_PROFILE',
+        ),
 
-    ],
+    ]
 
 ];
 ```

@@ -428,7 +428,7 @@ class DocumentPackageGenerationTest extends TestCase
         );
 
         $this->assertFileExists(
-            $output.'/package.pdf'
+            $output.'/package_with_blank_page.pdf'
         );
     }
 
@@ -498,7 +498,7 @@ class DocumentPackageGenerationTest extends TestCase
         );
 
         $this->assertFileExists(
-            $output.'/package.pdf'
+            $output.'/package_with_blank_pages.pdf'
         );
     }
 }

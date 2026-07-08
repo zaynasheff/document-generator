@@ -46,9 +46,20 @@ class DocumentGeneratorServiceProvider extends ServiceProvider
                     );
                 }
 
+                $profile = $config->get(
+                    'document-generator.libreoffice.profile'
+                );
+
+                if (! is_null($profile) && ! is_string($profile)) {
+                    throw new UnexpectedValueException(
+                        'The "document-generator.libreoffice.profile" configuration value must be a string or null.'
+                    );
+                }
+
                 return new DocumentGeneratorConfig(
                     $binary,
-                    $timeout
+                    $timeout,
+                    $profile,
                 );
             }
         );
